@@ -18,7 +18,6 @@ class EventListView(generic.ListView):
         qs = (
             Event.objects.select_related("category")
             .prefetch_related("participants")
-            .annotate(participant_count=Count("participants"))
         )
 
         # Text search
@@ -35,6 +34,11 @@ class EventListView(generic.ListView):
         if start_date and end_date:
             qs = qs.filter(date__range=[start_date, end_date])
         return qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["object_list"] = ctx["object_list"].annotate(participant_count=Count("participants"))
+        return ctx
 
 
 class EventDetailView(generic.DetailView):
@@ -67,6 +71,10 @@ class EventDeleteView(generic.DeleteView):
 
 # Participant CRUD -------------------------------------------------
 class ParticipantListView(generic.ListView):
+    paginate_by = 20
+
+    def get_queryset(self):
+        return Participant.objects.annotate(event_total=Count("events")).only("name", "email")
     model = Participant
     template_name = "events/participant_list.html"
     paginate_by = 20
@@ -125,24 +133,27 @@ class OrganizerDashboardView(generic.TemplateView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         today = timezone.localdate()
-        events = Event.objects.all()
+        base_qs = Event.objects.select_related("category").prefetch_related("participants")
+        event_counts = base_qs.aggregate(
+            total_events=Count("id"),
+            upcoming_events=Count("id", filter=Q(date__gte=today)),
+            past_events=Count("id", filter=Q(date__lt=today)),
+        )
+        ctx.update(event_counts)
         ctx["total_participants"] = Participant.objects.count()
-        ctx["total_events"] = events.count()
-        ctx["upcoming_events"] = events.filter(date__gte=today).count()
-        ctx["past_events"] = events.filter(date__lt=today).count()
-        ctx["todays_events"] = events.filter(date=today).select_related("category")
+        ctx["todays_events"] = base_qs.filter(date=today)
         # For interactive stats via simple js "filter" param
         stat_filter = self.request.GET.get("filter", "all")
         if stat_filter == "upcoming":
-            ctx["filtered_events"] = events.filter(date__gte=today)
+            ctx["filtered_events"] = base_qs.filter(date__gte=today)
         elif stat_filter == "past":
-            ctx["filtered_events"] = events.filter(date__lt=today)
+            ctx["filtered_events"] = base_qs.filter(date__lt=today)
         else:
-            ctx["filtered_events"] = events
+            ctx["filtered_events"] = base_qs
 
         # Show participants table if requested
         if self.request.GET.get("show") == "participants":
-            ctx["participants"] = Participant.objects.all().prefetch_related("events")
+            ctx["participants"] = Participant.objects.annotate(event_total=Count("events")).only("name", "email")
         return ctx
 
 
@@ -156,10 +167,11 @@ class EventSearchView(generic.ListView):
         return (
             Event.objects.filter(Q(name__icontains=q) | Q(location__icontains=q))
             .select_related("category")
-            .annotate(participant_count=Count("participants"))
+            .prefetch_related("participants")
         )
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
+        ctx["object_list"] = ctx["object_list"].annotate(participant_count=Count("participants"))
         ctx["query"] = self.request.GET.get("q", "")
         return ctx

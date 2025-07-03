@@ -38,7 +38,7 @@ class ParticipantForm(TailwindModelForm):
         model = Participant
         fields = ["name", "email", "events"]
         widgets = {
-            "events": forms.CheckboxSelectMultiple(),
+            "events": forms.SelectMultiple(attrs={"class": "select2 w-full", "data-placeholder": "Select events..."}),
         }
 
 

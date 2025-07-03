@@ -17,7 +17,7 @@
     <tr class="dark-table-row">
       <td class="py-2 px-3 text-gray-200">{{ participant.name }}</td>
       <td class="py-2 px-3 text-gray-200">{{ participant.email }}</td>
-      <td class="py-2 px-3 text-gray-200">{{ participant.events.count }}</td>
+      <td class="py-2 px-3 text-gray-200">{{ participant.event_total }}</td>
       <td class="py-2 px-3 space-x-2">
         <a href="{% url 'events:participant-edit' participant.pk %}" class="action-edit">Edit</a>
         <a href="{% url 'events:participant-delete' participant.pk %}" class="action-delete">Delete</a>

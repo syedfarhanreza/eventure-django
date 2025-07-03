@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-qz@+_0#7og7w7w1v3jbzlf*ub_t0mena5+-25)gi571kga7sp%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = ["https://*.onrender.com","http://127.0.0.1:8000/"]
 
 
 # Application definition
@@ -38,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'events',
+    'django.contrib.postgres',
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
@@ -48,8 +51,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]
 ROOT_URLCONF = 'eventure.urls'
 
 TEMPLATES = [
