@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Events{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-semibold mb-6 text-teal-400">Events</h1>
+<div class="mb-4 flex items-center space-x-2">
+  <form method="get" class="flex space-x-2">
+    <input
+      type="text"
+      name="q"
+      value="{{ request.GET.q }}"
+      placeholder="Search by name or location..."
+      class="bg-gray-800 border border-gray-600 rounded px-3 py-1 text-gray-200 placeholder-gray-500 focus:border-teal-400 focus:ring-0"
+    />
+    <button class="bg-teal-600 hover:bg-teal-500 text-white px-3 py-1 rounded transition">Search</button>
+  </form>
+  <a href="{% url 'events:event-add' %}" class="ml-auto bg-fuchsia-600 hover:bg-fuchsia-500 text-white px-3 py-1 rounded transition">Add Event</a>
+</div>
+<table class="min-w-full bg-gray-800 shadow rounded">
+  <thead>
+    <tr class="bg-gray-700 text-left text-teal-300">
+      <th class="py-2 px-3 text-gray-200">Name</th>
+      <th class="py-2 px-3 text-gray-200">Date</th>
+      <th class="py-2 px-3 text-gray-200">Category</th>
+      <th class="py-2 px-3 text-gray-200">Participants</th>
+      <th class="py-2 px-3 text-gray-200">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for event in object_list %}
+    <tr class="border-t border-gray-700 hover:bg-gray-700/50">
+      <td class="py-2 px-3 text-gray-200">
+        <a class="text-teal-400 hover:text-teal-200" href="{% url 'events:event-detail' event.pk %}">{{ event.name }}</a>
+      </td>
+      <td class="py-2 px-3 text-gray-200">{{ event.date }} {{ event.time }}</td>
+      <td class="py-2 px-3 text-gray-200">{{ event.category }}</td>
+      <td class="py-2 px-3 text-gray-200">{{ event.participant_count }}</td>
+      <td class="py-2 px-3 space-x-2">
+        <a href="{% url 'events:event-edit' event.pk %}" class="text-yellow-400 hover:text-yellow-300">Edit</a>
+        <a href="{% url 'events:event-delete' event.pk %}" class="text-rose-400 hover:text-rose-300">Delete</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="5" class="text-center py-4 text-gray-400">No events found.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if is_paginated %}
+<div class="mt-4 flex justify-center space-x-2">
+  {% if page_obj.has_previous %}
+  <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 bg-gray-200 rounded">Previous</a>
+  {% endif %}
+  <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+  <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 bg-gray-200 rounded">Next</a>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

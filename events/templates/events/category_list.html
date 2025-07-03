@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Categories{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-semibold mb-6 text-teal-400">Categories</h1>
+<a href="{% url 'events:category-add' %}" class="btn-accent mb-4 inline-block">Add Category</a>
+<table class="dark-table">
+  <thead>
+    <tr class="dark-table-head">
+      <th class="py-2 px-3 text-gray-200">Name</th>
+      <th class="py-2 px-3 text-gray-200">Description</th>
+      <th class="py-2 px-3 text-gray-200">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for category in object_list %}
+    <tr class="dark-table-row">
+      <td class="py-2 px-3 text-gray-200">{{ category.name }}</td>
+      <td class="py-2 px-3 text-gray-200">{{ category.description|truncatechars:60 }}</td>
+      <td class="py-2 px-3 space-x-2">
+        <a href="{% url 'events:category-edit' category.pk %}" class="action-edit">Edit</a>
+        <a href="{% url 'events:category-delete' category.pk %}" class="action-delete">Delete</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3" class="text-center py-4 text-gray-400">No categories.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

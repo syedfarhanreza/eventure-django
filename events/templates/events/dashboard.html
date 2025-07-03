@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-semibold mb-6">Organizer Dashboard</h1>
+
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+  <a href="?filter=all" class="transform hover:-translate-y-1 transition shadow-xl rounded-xl p-6 bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 text-white flex flex-col space-y-2">
+    <p class="text-white text-sm uppercase tracking-wide drop-shadow">Total Events</p>
+    <p class="text-4xl font-extrabold">{{ total_events }}</p>
+  </a>
+  <a href="?filter=upcoming" class="transform hover:-translate-y-1 transition shadow-xl rounded-xl p-6 bg-gradient-to-br from-teal-500 via-emerald-500 to-lime-500 text-white flex flex-col space-y-2" id="stat-upcoming">
+    <p class="text-white text-sm uppercase tracking-wide drop-shadow">Upcoming Events</p>
+    <p class="text-4xl font-extrabold">{{ upcoming_events }}</p>
+  </a>
+  <a href="?filter=past" class="transform hover:-translate-y-1 transition shadow-xl rounded-xl p-6 bg-gradient-to-br from-rose-500 via-pink-500 to-orange-500 text-white flex flex-col space-y-2" id="stat-past">
+    <p class="text-white text-sm uppercase tracking-wide drop-shadow">Past Events</p>
+    <p class="text-4xl font-extrabold">{{ past_events }}</p>
+  </a>
+  <a href="?show=participants" class="transform hover:-translate-y-1 transition shadow-xl rounded-xl p-6 bg-gradient-to-br from-orange-400 via-amber-500 to-yellow-500 text-white flex flex-col space-y-2">
+    <p class="text-white text-sm uppercase tracking-wide drop-shadow">Total Participants</p>
+    <p class="text-4xl font-extrabold">{{ total_participants }}</p>
+  </a>
+</div>
+
+<!-- Today's Events -->
+<h2 class="text-xl font-semibold mb-2">Today's Events</h2>
+<ul class="list-disc pl-5 mb-6 text-gray-300">
+  {% for ev in todays_events %}
+  <li>{{ ev.name }} ({{ ev.time }})</li>
+  {% empty %}
+  <li>No events today.</li>
+  {% endfor %}
+</ul>
+
+{% if participants %}
+<!-- Participants Table -->
+<h2 class="text-xl font-semibold mb-2">Participants</h2>
+<table class="min-w-full bg-gray-800 shadow rounded">
+  <thead>
+    <tr class="bg-gray-700 text-left text-teal-300 uppercase text-sm tracking-wide">
+      <th class="py-2 px-3 text-gray-200">Name</th>
+      <th class="py-2 px-3 text-gray-200">Email</th>
+      <th class="py-2 px-3 text-gray-200">Events</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in participants %}
+    <tr class="border-t border-gray-700 hover:bg-gray-700/40">
+      <td class="py-2 px-3 text-gray-200">{{ p.name }}</td>
+      <td class="py-2 px-3 text-gray-200">{{ p.email }}</td>
+      <td class="py-2 px-3 text-gray-200">{{ p.events.count }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3" class="text-center py-4 text-gray-400">No participants.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<!-- Filtered Events Table -->
+<h2 class="text-xl font-semibold mb-2">Events</h2>
+<table class="min-w-full bg-gray-800 shadow rounded">
+  <thead>
+    <tr class="bg-gray-700 text-left text-teal-300 uppercase text-sm tracking-wide">
+      <th class="py-2 px-3 text-gray-200">Name</th>
+      <th class="py-2 px-3 text-gray-200">Date</th>
+      <th class="py-2 px-3 text-gray-200">Category</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for ev in filtered_events %}
+    <tr class="border-t border-gray-700 hover:bg-gray-700/40">
+      <td class="py-2 px-3 text-gray-200">{{ ev.name }}</td>
+      <td class="py-2 px-3 text-gray-200">{{ ev.date }}</td>
+      <td class="py-2 px-3 text-gray-200">{{ ev.category }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3" class="text-center py-4 text-gray-400">No events.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% endblock %}

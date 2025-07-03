@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Eventure{% endblock %}</title>
+    <link href="{% static 'css/output.css' %}" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-900 text-gray-200 min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <nav class="bg-gradient-to-r from-fuchsia-600 via-violet-700 to-indigo-700 shadow-lg mb-8">
+      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <a href="{% url 'events:event-list' %}" class="text-xl font-bold text-white tracking-wide">Eventure</a>
+        <div class="space-x-4">
+          <a href="{% url 'events:event-list' %}" class="text-gray-200 hover:text-teal-400 font-medium transition">Events</a>
+          <a href="{% url 'events:participant-list' %}" class="text-gray-200 hover:text-teal-400 font-medium transition">Participants</a>
+          <a href="{% url 'events:category-list' %}" class="text-gray-200 hover:text-teal-400 font-medium transition">Categories</a>
+          <a href="{% url 'events:dashboard' %}" class="text-gray-200 hover:text-teal-400 font-medium transition">Dashboard</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="flex-1 container  mx-auto px-4">
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>
+

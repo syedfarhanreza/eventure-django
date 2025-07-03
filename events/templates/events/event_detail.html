@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}{{ object.name }}{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-semibold mb-6 text-teal-400">{{ object.name }}</h1>
+<p class="mb-2 text-gray-200"><span class="font-semibold text-gray-300">Date:</span> {{ object.date }} {{ object.time }}</p>
+<p class="mb-2 text-gray-200"><span class="font-semibold text-gray-300">Location:</span> {{ object.location }}</p>
+<p class="mb-2 text-gray-200"><span class="font-semibold text-gray-300">Category:</span> {{ object.category }}</p>
+<p class="mb-4">{{ object.description }}</p>
+
+<h2 class="text-xl font-semibold mb-4 text-teal-400">Participants ({{ object.participants.count }})</h2>
+<ul class="list-disc pl-5 mb-6 text-gray-200">
+  {% for participant in object.participants.all %}
+  <li>{{ participant.name }} &lt;{{ participant.email }}&gt;</li>
+  {% empty %}
+  <li class="text-gray-400">No participants yet.</li>
+  {% endfor %}
+</ul>
+
+<a href="{% url 'events:event-edit' object.pk %}" class="action-edit px-3 py-1">Edit</a>
+<a href="{% url 'events:event-delete' object.pk %}" class="action-delete px-3 py-1">Delete</a>
+{% endblock %}
