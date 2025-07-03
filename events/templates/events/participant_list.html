@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}Participants{% endblock %}
 {% block content %}
-<h1 class="text-2xl font-semibold mb-6 text-teal-400">Participants</h1>
-<a href="{% url 'events:participant-add' %}" class="btn-accent mb-4 inline-block">Add Participant</a>
-<table class="dark-table">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <h1 class="text-2xl font-semibold mb-6 text-teal-400">Participants</h1>
+  <a href="{% url 'events:participant-add' %}" class="btn-accent mb-4 inline-block">Add Participant</a>
+  <table class="dark-table w-full">
   <thead>
     <tr class="dark-table-head">
       <th class="py-2 px-3 text-gray-200">Name</th>
@@ -27,5 +28,6 @@
     <tr><td colspan="4" class="text-center py-4 text-gray-400">No participants.</td></tr>
     {% endfor %}
   </tbody>
-</table>
+  </table>
+</div>
 {% endblock %}
